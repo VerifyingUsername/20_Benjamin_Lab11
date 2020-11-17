@@ -7,8 +7,10 @@ public class PlayerController : MonoBehaviour
 {
     Animator playerAnim;
     public GameObject healthText;
-    float speed = 5.0f;
-    int health = 1;
+
+    public float speed;
+    public float damagerate;
+    public float health;
 
     bool Death = false;
     // Start is called before the first frame update
@@ -76,23 +78,29 @@ public class PlayerController : MonoBehaviour
                 playerAnim.SetTrigger("trigAttack");
             }
 
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                playerAnim.SetTrigger("trigAttack");
-            }
+            
         }
 
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerStay(Collider other)
     {
-        if (collision.gameObject.CompareTag("Cube"))
+        if (other.gameObject.tag == "Cube")
+        {
+            health -= damagerate * Time.deltaTime;
+            healthText.GetComponent<Text>().text = "Health:" + health;
+        }
+
+        if (health <= 0)
         {
             playerAnim.SetTrigger("trigDeath");
             Death = true;
-            health --;
-            healthText.GetComponent<Text>().text = "Health: " + health;
-            Debug.Log("Touching RedCube");
+        }
+
+        if(Death == true)
+        {           
+            healthText.GetComponent<Text>().text = "Health: 0" ;
+            //Debug.Log("Touching Cube");
         }
     }
 }
